@@ -1,0 +1,38 @@
+
+https://learn.sparkfun.com/tutorials/pro-micro--fio-v3-hookup-guide
+
+https://learn.sparkfun.com/tutorials/graphic-lcd-hookup-guide
+
+
+https://www.arduino.cc/reference/en/
+
+MRFC522 https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf
+
+- https://github.com/ljos/MFRC522
+- https://github.com/miguelbalboa/rfid
+
+https://github.com/sparkfun/GraphicLCD_Nokia_5110
+
+
+PINS
+
+
+7 - SS RFID
+8 - RST RFID
+
+18 (A2) - MODE Screen
+19 (A1) - RST Screen
+20 (A0) - SS Screen
+15 - SCLK
+14 - MISO
+16 - MOSI
+10 - LED Screen Backlight (PWM) (w/ 330 Ohm resistor)
+
+Breakout
+
+- VCC
+- GND
+- 330 Ohm LED line
+- SCLK
+- MISO
+- MOSI
