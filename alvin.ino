@@ -1,28 +1,30 @@
 #include <SPI.h>
-#include "./vendor/LCD_Functions.h"
-//#include "./vendor/rfid/src/MFRC522.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_PCD8544.h>
+//#include "vendor/Adafruit-GFX-Library-1.2.3/Adafruit_GFX.h"
+//#include "vendor/Adafruit-PCD8544-Nokia-5110-LCD-library/Adafruit_PCD8544.h"
 
-//constexpr uint8_t RST_PIN = 9;     // Configurable, see typical pin layout above
-//constexpr uint8_t SS_PIN = 10;     // Configurable, see typical pin layout above
- 
-//MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
+Adafruit_PCD8544 display = Adafruit_PCD8544(18, 20, 19);
 
-//MFRC522::MIFARE_Key key; 
-
-// Init array that will store new NUID 
-//byte nuidPICC[4];
-
-
-const int pin = 17;
+const int blPin = 10;
 
 void setup() {
-  // put your setup code here, to run once:
-  pinMode(pin, OUTPUT);
+
+  pinMode(blPin, OUTPUT);
+  analogWrite(blPin, 100);
+
+  display.begin();
+  // init done
+
+  // you can change the contrast around to adapt the display
+  // for the best viewing!
+  display.setContrast(60);
+
+  display.display(); // show splashscreen
+  delay(2000);
+  display.clearDisplay();
+
 }
 
 void loop() {
-  digitalWrite(pin, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(pin, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);  
 }

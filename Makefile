@@ -8,16 +8,15 @@ upload:
 clean:
 	rm -rf ./build/*
 
-vendor/LCD_Functions.h:
-	curl https://raw.githubusercontent.com/sparkfun/GraphicLCD_Nokia_5110/master/Firmware/Nokia-5100-LCD-Example/LCD_Functions.h > ./vendor/LCD_Functions.h
-
-vendor/LCD_Functions_license.txt:
-	curl https://raw.githubusercontent.com/sparkfun/GraphicLCD_Nokia_5110/master/LICENSE.md > ./vendor/LCD_Functions_license.txt
-
 vendor/rfid:
 	curl -L -o ./vendor/rfid.zip https://github.com/miguelbalboa/rfid/archive/master.zip 
 	unzip -d ./vendor ./vendor/rfid
 	mv ./vendor/rfid-master ./vendor/rfid
 	rm ./vendor/rfid.zip
 
-vendor: vendor/LCD_Functions.h vendor/LCD_Functions_license.txt vendor/rfid
+vendor/Adafruit-GFX-Library:
+	curl -L -o ./vendor/Adafruit-GFX-Library.tar.gz https://github.com/adafruit/Adafruit-GFX-Library/archive/v1.2.3.tar.gz
+	cd vendor && tar xzf Adafruit-GFX-Library.tar.gz
+	cd vendor && rm Adafruit-GFX-Library.tar.gz
+
+vendor: vendor/Adafruit-GFX-Library
