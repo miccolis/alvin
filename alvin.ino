@@ -1,8 +1,9 @@
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
-//#include "vendor/Adafruit-GFX-Library-1.2.3/Adafruit_GFX.h"
-//#include "vendor/Adafruit-PCD8544-Nokia-5110-LCD-library/Adafruit_PCD8544.h"
+#include <MFRC522.h>
+
+MFRC522 mfrc522(7, 8);
 
 Adafruit_PCD8544 display = Adafruit_PCD8544(18, 20, 19);
 
@@ -14,17 +15,37 @@ void setup() {
   analogWrite(blPin, 100);
 
   display.begin();
-  // init done
+  display.setRotation(2);
 
-  // you can change the contrast around to adapt the display
-  // for the best viewing!
   display.setContrast(60);
 
   display.display(); // show splashscreen
   delay(2000);
   display.clearDisplay();
 
+  Serial.begin(9600);
+  mfrc522.PCD_Init();
+  mfrc522.PCD_DumpVersionToSerial();
+
+  display.setTextSize(1);
+  display.setTextColor(BLACK);
+  display.setCursor(0,0);
+  display.println("Ready!");
+  display.display();
+  delay(2000);
 }
 
 void loop() {
+    // Look for new cards
+    if ( ! mfrc522.PICC_IsNewCardPresent()) {
+            return;
+    }
+
+    // Select one of the cards
+    if ( ! mfrc522.PICC_ReadCardSerial()) {
+            return;
+    }
+
+    // Dump debug info about the card; PICC_HaltA() is automatically called
+    mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
 }
