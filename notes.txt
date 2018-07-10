@@ -17,6 +17,8 @@ Install the "Adafruit GFX Library" and the "Adafruit PCD8544 Nokia 5110 LCD libr
 
 ## Links
 
+Use http://javl.github.io/image2cpp/ to covert bmp images to cyptes
+
 https://learn.sparkfun.com/tutorials/pro-micro--fio-v3-hookup-guide
 
 https://learn.sparkfun.com/tutorials/graphic-lcd-hookup-guide

@@ -2,6 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include <MFRC522.h>
+#include "./images.h"
 
 MFRC522 mfrc522(7, 8);
 
@@ -20,7 +21,9 @@ void setup() {
   display.setRotation(2);
 
   display.setContrast(60);
-
+  
+  display.clearDisplay();
+  display.drawBitmap(0, 0, redDB, 72, 48, BLACK);
   display.display(); // show splashscreen
   delay(1000);
   display.clearDisplay();
