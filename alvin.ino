@@ -3,19 +3,24 @@
 #include <Adafruit_PCD8544.h>
 #include <MFRC522.h>
 #include "./images.h"
+#include "./item.h"
 
+// Declare the wiring
 MFRC522 mfrc522(7, 8);
-
 Adafruit_PCD8544 display = Adafruit_PCD8544(18, 20, 19);
+const uint8_t blPin = 10;
 
-const int blPin = 10;
-
+// Global state
 MFRC522::Uid activeUid;
+uint8_t pattern[8];
+Item availableItems[4];
 
 void setup() {
 
   pinMode(blPin, OUTPUT);
   analogWrite(blPin, 100);
+
+  loadItems(availableItems);
 
   display.begin();
   display.setRotation(2);
@@ -73,14 +78,14 @@ void loop() {
 void copyUid(MFRC522::Uid* src, MFRC522::Uid* dest) {
     dest->size = src->size;
     dest->sak = src->sak;
-    for(int i = 0; i < src->size; i++) {
+    for(uint8_t i = 0; i < src->size; i++) {
         dest->uidByte[i] = src->uidByte[i];
     }
 }
 
 void printUid(MFRC522::Uid* uid) {
     display.print(F("Card UID:"));
-    for (byte i = 0; i < uid->size; i++) {
+    for (uint8_t i = 0; i < uid->size; i++) {
         if(uid->uidByte[i] < 0x10)
             display.print(F(" 0"));
         else
