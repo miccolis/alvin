@@ -131,7 +131,7 @@ const unsigned char snowplow[] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-const char* const string_table[] PROGMEM = {
+const unsigned char* const itemImages[] PROGMEM = {
     blackCar, datsun, redCar, snowplow
 };
 

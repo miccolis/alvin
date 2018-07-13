@@ -12,8 +12,12 @@ const uint8_t blPin = 10;
 
 // Global state
 MFRC522::Uid activeUid;
-uint8_t pattern[8];
-Item availableItems[4];
+
+const uint8_t patternLen = 8;
+uint8_t pattern[patternLen];
+
+const uint8_t availableItemsLen = 4;
+Item availableItems[availableItemsLen];
 
 void setup() {
 
@@ -42,11 +46,13 @@ void setup() {
 
   mfrc522.PCD_Init();
 
-  //Serial.begin(9600);
+  Serial.begin(9600);
   //mfrc522.PCD_DumpVersionToSerial();
 }
 
 void loop() {
+    static uint8_t selectedIdx;
+
     // Look for new cards
     if ( ! mfrc522.PICC_IsNewCardPresent()) {
             return;
@@ -57,18 +63,34 @@ void loop() {
             return;
     }
 
-    copyUid(&(mfrc522.uid), &activeUid);
-
     // Dump debug info about the card; PICC_HaltA() is automatically called
     //mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
+    //mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
+
+    copyUid(&(mfrc522.uid), &activeUid);
     mfrc522.PICC_HaltA();
 
-    //delay(100);
-    display.clearDisplay();
-    display.println("Card read complete!");
-    printUid(&activeUid);
-    display.display();
+    selectedIdx = findItemByUid(availableItems, availableItemsLen, &activeUid);
+    if (selectedIdx > availableItemsLen) {
+        display.clearDisplay();
+        display.println("Not found!");
+        printUid(&activeUid);
+        display.display();
+    } else {
+        display.clearDisplay();
+        Serial.println(availableItems[selectedIdx].dim[0]);
+        Serial.println(availableItems[selectedIdx].dim[1]);
+        display.drawBitmap(0, 0,
+            //redDB,
+            itemImages[availableItems[selectedIdx].image],
+            availableItems[selectedIdx].dim[0],
+            availableItems[selectedIdx].dim[1],
+            BLACK);
+        display.display();
+    }
+
     delay(2000);
+
     display.clearDisplay();
     display.println("Ready!");
     display.display();
@@ -93,4 +115,10 @@ void printUid(MFRC522::Uid* uid) {
         display.print(uid->uidByte[i], HEX);
     }
     display.println();
+}
+
+void newPattern(uint8_t pattern[], uint8_t len) {
+    for (uint8_t i = 0; i < len; i++){
+        pattern[i] = random(0,4);
+    }
 }
