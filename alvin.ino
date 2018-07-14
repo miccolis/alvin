@@ -35,8 +35,28 @@ void setup() {
   display.drawBitmap(0, 0, redDB, 72, 48, BLACK);
   display.display(); // show splashscreen
   delay(1000);
-  display.clearDisplay();
 
+  display.fillScreen(WHITE);
+  display.drawBitmap(0, 0, blackCar, 88, 36, BLACK);
+  display.display();
+  delay(2000);
+
+  display.fillScreen(WHITE);
+  display.drawBitmap(0, 0, snowplow, 88, 36, BLACK);
+  display.display();
+  delay(2000);
+
+  display.fillScreen(WHITE);
+  display.drawBitmap(0, 0, redCar, 88, 32, BLACK);
+  display.display();
+  delay(2000);
+
+  display.fillScreen(WHITE);
+  display.drawBitmap(0, 0, datsun, 88, 32, BLACK);
+  display.display();
+  delay(2000);
+
+  display.fillScreen(WHITE);
   display.setTextSize(1);
   display.setTextColor(BLACK);
   display.setCursor(0,0);

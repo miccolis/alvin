@@ -20,7 +20,7 @@ Install the following Libraries using the Arduino IDE
 
 ## Graphics
 
-Images must be less that 84x48 pixes and monochrome. Images were created using Gimp and coverted to the appropriate binary format using: Use http://javl.github.io/image2cpp/
+Images must be less that 84x48 pixels and monochrome. Images were created using Gimp and coverted to the appropriate binary format using http://javl.github.io/image2cpp/
 
 ## Debug output
 
