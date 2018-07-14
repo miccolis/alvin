@@ -28,33 +28,13 @@ void setup() {
 
   display.begin();
   display.setRotation(2);
-
   display.setContrast(60);
-  
   display.clearDisplay();
-  display.drawBitmap(0, 0, redDB, 72, 48, BLACK);
-  display.display(); // show splashscreen
-  delay(1000);
 
-  display.fillScreen(WHITE);
-  display.drawBitmap(0, 0, blackCar, 88, 36, BLACK);
-  display.display();
-  delay(2000);
-
-  display.fillScreen(WHITE);
-  display.drawBitmap(0, 0, snowplow, 88, 36, BLACK);
-  display.display();
-  delay(2000);
-
-  display.fillScreen(WHITE);
-  display.drawBitmap(0, 0, redCar, 88, 32, BLACK);
-  display.display();
-  delay(2000);
-
-  display.fillScreen(WHITE);
-  display.drawBitmap(0, 0, datsun, 88, 32, BLACK);
-  display.display();
-  delay(2000);
+  for (int i = 0; i < 4; i++) {
+      showItem(1);
+      delay(1000);
+  }
 
   display.fillScreen(WHITE);
   display.setTextSize(1);
@@ -90,23 +70,15 @@ void loop() {
     copyUid(&(mfrc522.uid), &activeUid);
     mfrc522.PICC_HaltA();
 
+    display.clearDisplay();
+
     selectedIdx = findItemByUid(availableItems, availableItemsLen, &activeUid);
     if (selectedIdx > availableItemsLen) {
-        display.clearDisplay();
         display.println("Not found!");
         printUid(&activeUid);
         display.display();
     } else {
-        display.clearDisplay();
-        Serial.println(availableItems[selectedIdx].dim[0]);
-        Serial.println(availableItems[selectedIdx].dim[1]);
-        display.drawBitmap(0, 0,
-            //redDB,
-            itemImages[availableItems[selectedIdx].image],
-            availableItems[selectedIdx].dim[0],
-            availableItems[selectedIdx].dim[1],
-            BLACK);
-        display.display();
+        showItem(selectedIdx);
     }
 
     delay(2000);
@@ -141,4 +113,21 @@ void newPattern(uint8_t pattern[], uint8_t len) {
     for (uint8_t i = 0; i < len; i++){
         pattern[i] = random(0,4);
     }
+}
+
+void showItem(uint8_t i) {
+    uint16_t w = availableItems[i].dim[0];
+    uint16_t h = availableItems[i].dim[1];
+
+    display.fillScreen(WHITE);
+    if (i == 0) {
+        display.drawBitmap(0, 0, blackCar, w, h, BLACK);
+    } else if (i == 1) {
+        display.drawBitmap(0, 0, datsun, w, h, BLACK);
+    } else if (i == 2) {
+        display.drawBitmap(0, 0, redCar, w, h, BLACK);
+    } else if (i == 3) {
+        display.drawBitmap(0, 0, snowplow, w, h, BLACK);
+    }
+    display.display();
 }
