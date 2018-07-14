@@ -13,11 +13,13 @@ const uint8_t blPin = 10;
 // Global state
 MFRC522::Uid activeUid;
 
-const uint8_t patternLen = 8;
-uint8_t pattern[patternLen];
-
 const uint8_t availableItemsLen = 4;
 Item availableItems[availableItemsLen];
+
+const uint8_t patternLen = 8;
+uint8_t pattern[patternLen];
+uint8_t gameStep = 0;
+uint8_t gamelevel = 0;
 
 void setup() {
 
@@ -43,6 +45,8 @@ void setup() {
   display.println("Ready!");
   display.display();
   delay(2000);
+
+  newPattern(pattern, patternLen);
 
   mfrc522.PCD_Init();
 
@@ -109,12 +113,6 @@ void printUid(MFRC522::Uid* uid) {
     display.println();
 }
 
-void newPattern(uint8_t pattern[], uint8_t len) {
-    for (uint8_t i = 0; i < len; i++){
-        pattern[i] = random(0,4);
-    }
-}
-
 void showItem(uint8_t i) {
     uint16_t w = availableItems[i].dim[0];
     uint16_t h = availableItems[i].dim[1];
@@ -131,3 +129,10 @@ void showItem(uint8_t i) {
     }
     display.display();
 }
+
+void newPattern(uint8_t pattern[], uint8_t len) {
+    for (uint8_t i = 0; i < len; i++){
+        pattern[i] = random(0, availableItemsLen);
+    }
+}
+
