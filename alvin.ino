@@ -4,6 +4,7 @@
 #include <MFRC522.h>
 #include "./images.h"
 #include "./item.h"
+#include "./game.h"
 
 // Declare the wiring
 MFRC522 mfrc522(7, 8);
@@ -11,42 +12,36 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(18, 20, 19);
 const uint8_t blPin = 10;
 
 // Global state
-MFRC522::Uid activeUid;
-
 const uint8_t availableItemsLen = 4;
 Item availableItems[availableItemsLen];
 
-const uint8_t patternLen = 8;
-uint8_t pattern[patternLen];
-uint8_t gameStep = 0;
-uint8_t gamelevel = 0;
+GameState s;
 
 void setup() {
 
   pinMode(blPin, OUTPUT);
   analogWrite(blPin, 100);
 
-  loadItems(availableItems);
-
   display.begin();
   display.setRotation(2);
   display.setContrast(60);
+  display.display();
+  delay(1000);
   display.clearDisplay();
-
-  for (int i = 0; i < 4; i++) {
-      showItem(1);
-      delay(1000);
-  }
 
   display.fillScreen(WHITE);
   display.setTextSize(1);
   display.setTextColor(BLACK);
   display.setCursor(0,0);
-  display.println("Ready!");
+  display.println("Preparing...");
   display.display();
-  delay(2000);
 
-  newPattern(pattern, patternLen);
+  randomSeed(analogRead(21)); // Pin 21 (A3) is expected to be unconnected
+
+  loadItems(availableItems);
+  s.reset();
+
+  delay(2000);
 
   mfrc522.PCD_Init();
 
@@ -56,6 +51,32 @@ void setup() {
 
 void loop() {
     static uint8_t selectedIdx;
+    static MFRC522::Uid activeUid;
+
+    if (!s.playerTurn) {
+        Serial.println("machine goes");
+        Serial.println(s.gameLevel);
+        if (s.gameLevel == s.patternLen) { // untested
+            display.println("You Won!");
+            display.display();
+            s.reset();
+            delay(2000);
+        } else {
+            for (uint8_t l = 0; l <= s.gameLevel; l++) {
+                showItem(s.pattern[l]);
+                display.setCursor(0, 40);
+                display.println(l);
+                Serial.println(l);
+                Serial.println(s.pattern[l]);
+                delay(1000);
+            }
+            display.clearDisplay();
+            display.println("Go!");
+            display.display();
+            s.playerTurn = true;
+        }
+        return;
+    }
 
     // Look for new cards
     if ( ! mfrc522.PICC_IsNewCardPresent()) {
@@ -77,20 +98,52 @@ void loop() {
     display.clearDisplay();
 
     selectedIdx = findItemByUid(availableItems, availableItemsLen, &activeUid);
+
+    Serial.println("human went");
+    Serial.println(selectedIdx);
+    Serial.println(s.pattern[s.gameStep]);
     if (selectedIdx > availableItemsLen) {
         display.println("Not found!");
         printUid(&activeUid);
         display.display();
+        delay(2000);
+    } else if (selectedIdx == s.pattern[s.gameStep]) {
+        showItem(selectedIdx);
+        display.setCursor(0, 40);
+        display.println("Excellent!");
+        display.display();
+
+        //s.gameStep++;
+        //s.attempt = 0;
+        //if (s.gameStep == s.gameLevel) {
+        //    s.gameStep = 0;
+        //    s.gameLevel++;
+        //}
+        s.playerTurn = false;
+        delay(2000);
+        return;
     } else {
         showItem(selectedIdx);
+        s.attempt++;
+        if (s.attempt >= 3) {
+            delay(2000);
+            s.reset();
+            display.clearDisplay();
+            display.println("Game over!");
+            display.display();
+            delay(2000);
+            return;
+        }
+        display.setCursor(0, 40);
+        display.println("Try again!");
+        display.display();
+        delay(2000);
+
+        display.clearDisplay();
+        display.println("Go!");
+        display.display();
+        return;
     }
-
-    delay(2000);
-
-    display.clearDisplay();
-    display.println("Ready!");
-    display.display();
-
 }
 
 void copyUid(MFRC522::Uid* src, MFRC522::Uid* dest) {
@@ -130,9 +183,5 @@ void showItem(uint8_t i) {
     display.display();
 }
 
-void newPattern(uint8_t pattern[], uint8_t len) {
-    for (uint8_t i = 0; i < len; i++){
-        pattern[i] = random(0, availableItemsLen);
-    }
-}
+
 
