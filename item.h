@@ -32,7 +32,7 @@ uint8_t findItemByUid(Item list[], uint8_t len, MFRC522::Uid *uid) {
 }
 
 // It's unfortunate to have the dimensions separate from the image definitions but
-// I think they're too hard to refer too in the see of binary data that is images.h
+// I think they're too hard to refer too in the sea of binary data that is images.h
 void loadItems(Item v[]) {
     // blackCar
     //v[0].image = 0;
