@@ -69,6 +69,10 @@ void loop() {
                 Serial.println(l);
                 Serial.println(s.pattern[l]);
                 delay(1000);
+
+                display.fillScreen(WHITE);
+                display.display();
+                delay(200);
             }
             display.clearDisplay();
             display.println("Go!");
@@ -113,14 +117,17 @@ void loop() {
         display.println("Excellent!");
         display.display();
 
-        //s.gameStep++;
-        //s.attempt = 0;
-        //if (s.gameStep == s.gameLevel) {
-        //    s.gameStep = 0;
-        //    s.gameLevel++;
-        //}
-        s.playerTurn = false;
-        delay(2000);
+        Serial.println("Advance step");
+        s.gameStep++;
+
+        if (s.gameStep > s.gameLevel) {
+            Serial.println("Advance level");
+            s.gameLevel++;
+            s.gameStep = 0;
+            s.attempt = 0;
+            s.playerTurn = false;
+            delay(2000);
+        }
         return;
     } else {
         showItem(selectedIdx);
@@ -134,6 +141,7 @@ void loop() {
             delay(2000);
             return;
         }
+        s.gameStep = 0;
         display.setCursor(0, 40);
         display.println("Try again!");
         display.display();
