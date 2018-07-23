@@ -44,9 +44,6 @@ void setup() {
   delay(2000);
 
   mfrc522.PCD_Init();
-
-  Serial.begin(9600);
-  //mfrc522.PCD_DumpVersionToSerial();
 }
 
 void loop() {
@@ -88,10 +85,6 @@ void loop() {
     if ( ! mfrc522.PICC_ReadCardSerial()) {
             return;
     }
-
-    // Dump debug info about the card; PICC_HaltA() is automatically called
-    //mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
-    //mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid));
 
     copyUid(&(mfrc522.uid), &activeUid);
     mfrc522.PICC_HaltA();
@@ -188,6 +181,4 @@ void showItem(uint8_t i) {
     }
     display.display();
 }
-
-
 

@@ -1,5 +1,4 @@
 struct Item {
-   //uint8_t image;
    uint16_t dim[2];
    MFRC522::Uid uid;
 };
