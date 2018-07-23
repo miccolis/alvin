@@ -1,11 +1,13 @@
+#define PATTERN_LENGTH 8
+
 struct GameState {
-    const uint8_t patternLen = 8; // TODO pass in constructor
+    const uint8_t patternLen = PATTERN_LENGTH; // TODO pass in constructor
     const uint8_t availableItemsLen = 4; // TODO pass in constructor
 
     uint8_t gameStep;
     uint8_t gameLevel;
     uint8_t attempt;
-    uint8_t pattern[8];
+    uint8_t pattern[PATTERN_LENGTH];
     bool playerTurn;
 
     void reset() {

@@ -54,9 +54,8 @@ void loop() {
     static MFRC522::Uid activeUid;
 
     if (!s.playerTurn) {
-        Serial.println("machine goes");
-        Serial.println(s.gameLevel);
-        if (s.gameLevel == s.patternLen) { // untested
+        if (s.gameLevel == s.patternLen) {
+            display.clearDisplay();
             display.println("You Won!");
             display.display();
             s.reset();
@@ -66,13 +65,11 @@ void loop() {
                 showItem(s.pattern[l]);
                 display.setCursor(0, 40);
                 display.println(l);
-                Serial.println(l);
-                Serial.println(s.pattern[l]);
                 delay(1000);
 
                 display.fillScreen(WHITE);
                 display.display();
-                delay(200);
+                delay(1000);
             }
             display.clearDisplay();
             display.println("Go!");
@@ -103,9 +100,6 @@ void loop() {
 
     selectedIdx = findItemByUid(availableItems, availableItemsLen, &activeUid);
 
-    Serial.println("human went");
-    Serial.println(selectedIdx);
-    Serial.println(s.pattern[s.gameStep]);
     if (selectedIdx > availableItemsLen) {
         display.println("Not found!");
         printUid(&activeUid);
@@ -117,16 +111,18 @@ void loop() {
         display.println("Excellent!");
         display.display();
 
-        Serial.println("Advance step");
         s.gameStep++;
 
+        delay(1000);
+        display.fillScreen(WHITE);
+        display.println("Go!");
+        display.display();
+
         if (s.gameStep > s.gameLevel) {
-            Serial.println("Advance level");
             s.gameLevel++;
             s.gameStep = 0;
             s.attempt = 0;
             s.playerTurn = false;
-            delay(2000);
         }
         return;
     } else {
@@ -145,11 +141,13 @@ void loop() {
         display.setCursor(0, 40);
         display.println("Try again!");
         display.display();
-        delay(2000);
+        delay(1000);
 
-        display.clearDisplay();
-        display.println("Go!");
+        display.fillScreen(WHITE);
         display.display();
+        delay(1000);
+
+        s.playerTurn = false;
         return;
     }
 }
