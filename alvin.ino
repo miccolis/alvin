@@ -30,10 +30,11 @@ void setup() {
   display.clearDisplay();
 
   display.fillScreen(WHITE);
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(BLACK);
   display.setCursor(0,0);
-  display.println("Preparing...");
+  display.println("Get");
+  display.println("Ready!");
   display.display();
 
   randomSeed(analogRead(21)); // Pin 21 (A3) is expected to be unconnected
@@ -52,23 +53,27 @@ void loop() {
 
     if (!s.playerTurn) {
         if (s.gameLevel == s.patternLen) {
+            victoryAnimation();
             display.clearDisplay();
-            display.println("You Won!");
+            display.setTextSize(2);
+            display.println("You");
+            display.println("win!");
             display.display();
             s.reset();
-            delay(2000);
+            delay(5000);
         } else {
             for (uint8_t l = 0; l <= s.gameLevel; l++) {
+                display.fillScreen(WHITE);
+                display.display();
+                delay(1000);
+
                 showItem(s.pattern[l]);
                 display.setCursor(0, 40);
                 display.println(l);
                 delay(1000);
-
-                display.fillScreen(WHITE);
-                display.display();
-                delay(1000);
             }
             display.clearDisplay();
+            display.setTextSize(2);
             display.println("Go!");
             display.display();
             s.playerTurn = true;
@@ -94,6 +99,7 @@ void loop() {
     selectedIdx = findItemByUid(availableItems, availableItemsLen, &activeUid);
 
     if (selectedIdx > availableItemsLen) {
+        display.setTextSize(1);
         display.println("Not found!");
         printUid(&activeUid);
         display.display();
@@ -101,13 +107,16 @@ void loop() {
     } else if (selectedIdx == s.pattern[s.gameStep]) {
         showItem(selectedIdx);
         display.setCursor(0, 40);
-        display.println("Excellent!");
+        display.setTextSize(1);
+        display.println("Great!");
         display.display();
 
         s.gameStep++;
 
         delay(1000);
+
         display.fillScreen(WHITE);
+        display.setTextSize(2);
         display.println("Go!");
         display.display();
 
@@ -125,14 +134,17 @@ void loop() {
             delay(2000);
             s.reset();
             display.clearDisplay();
-            display.println("Game over!");
+            display.setTextSize(2);
+            display.println("Game");
+            display.println("over!");
             display.display();
             delay(2000);
             return;
         }
         s.gameStep = 0;
         display.setCursor(0, 40);
-        display.println("Try again!");
+        display.setTextSize(1);
+        display.println("Try again...");
         display.display();
         delay(1000);
 
@@ -166,19 +178,44 @@ void printUid(MFRC522::Uid* uid) {
 }
 
 void showItem(uint8_t i) {
+    showItem(i, 0, 0);
+}
+
+void showItem(uint8_t i, int16_t x, int16_t y) {
     uint16_t w = availableItems[i].dim[0];
     uint16_t h = availableItems[i].dim[1];
 
     display.fillScreen(WHITE);
     if (i == 0) {
-        display.drawBitmap(0, 0, blackCar, w, h, BLACK);
+        display.drawBitmap(x, y, blackCar, w, h, BLACK);
     } else if (i == 1) {
-        display.drawBitmap(0, 0, datsun, w, h, BLACK);
+        display.drawBitmap(x, y, datsun, w, h, BLACK);
     } else if (i == 2) {
-        display.drawBitmap(0, 0, redCar, w, h, BLACK);
+        display.drawBitmap(x, y, redCar, w, h, BLACK);
     } else if (i == 3) {
-        display.drawBitmap(0, 0, snowplow, w, h, BLACK);
+        display.drawBitmap(x, y, snowplow, w, h, BLACK);
     }
     display.display();
 }
 
+void victoryAnimation() {
+    cruiseAninmation(2, 700);
+    cruiseAninmation(1, 1000);
+    cruiseAninmation(0, 1000);
+    cruiseAninmation(3, 1500);
+}
+
+void cruiseAninmation(uint8_t car, uint16_t ms) {
+    uint8_t steps = 20;
+    uint16_t adjust = (84 * 2) / steps;
+    uint16_t wait = ms / steps;
+
+    int16_t x = 84;
+    for (int8_t i = steps + 2; i > 0; i--) { // plus one to get item off screen,
+                                             // plus two for looks.
+        showItem(car, x, 0);
+        x = x - adjust;
+        delay(wait);
+    }
+    return;
+}
